@@ -1,0 +1,2 @@
+add_lunch_combo twrp_armor28ultra-eng
+add_lunch_combo twrp_armor28ultra-userdebug

@@ -1,0 +1,28 @@
+# Ulefone Armor 28 Ultra - TWRP fstab
+# Basato su fstab.mt6989 / recovery.fstab estratti da vendor_boot
+
+/system      erofs   /dev/block/mapper/system       ro,barrier=1,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta_system
+/system      ext4    /dev/block/mapper/system       ro,barrier=1,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta_system
+
+/system_ext  erofs   /dev/block/mapper/system_ext   ro,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta_system
+/system_ext  ext4    /dev/block/mapper/system_ext   ro,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta_system
+
+/vendor      erofs   /dev/block/mapper/vendor       ro,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta
+/vendor      ext4    /dev/block/mapper/vendor       ro,slotselect,logical,first_stage_mount   wait,slotselect,avb=vbmeta
+
+/product     erofs   /dev/block/mapper/product      ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+/product     ext4    /dev/block/mapper/product      ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+
+/vendor_dlkm erofs   /dev/block/mapper/vendor_dlkm  ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+/vendor_dlkm ext4    /dev/block/mapper/vendor_dlkm  ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+
+/odm_dlkm    erofs   /dev/block/mapper/odm_dlkm     ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+/odm_dlkm    ext4    /dev/block/mapper/odm_dlkm     ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+
+/system_dlkm erofs   /dev/block/mapper/system_dlkm  ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+/system_dlkm ext4    /dev/block/mapper/system_dlkm  ro,slotselect,logical,first_stage_mount   wait,slotselect,avb
+
+/metadata    f2fs    /dev/block/by-name/metadata    rw   wait,check,formattable,first_stage_mount
+
+/data        f2fs    /dev/block/by-name/userdata    rw,quota,latemount,formattable,resize,checkpoint=fs,encryptable=footer   wait,check,quota,reservedsize=128M
+/data        ext4    /dev/block/by-name/userdata    rw,quota,latemount,formattable,resize,checkpoint=fs,encryptable=footer   wait,check,quota,reservedsize=128M

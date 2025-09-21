@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+
+  <!-- Remoti di base -->
+  <remote  name="github" fetch="https://github.com/" />
+
+  <!-- Default: lasciare senza 'default remote' così le <include> mantengono
+       le impostazioni originali del minimal manifest TWRP -->
+  <default sync-j="8" />
+
+  <!-- Include dei set standard del minimal-manifest-twrp -->
+  <include name="twrp-default.xml" />
+  <include name="remove-minimal.xml" />
+
+  <!-- >>> Il TUO device tree (online) <<< -->
+  <project
+      name="Harlock1978/TWRP-Ulefone-Armor28-Ultra-NEEA"
+      path="device/ulefone/armor28ultra"
+      remote="github"
+      revision="twrp-14.1" />
+  <!--
+    NOTE:
+    - Se il repo del device tree è su un branch diverso, metti 'revision="main"' o quello che usi.
+    - Il path deve combaciare con i tuoi makefile (twrp_armor28ultra.mk, AndroidProducts.mk, ecc.)
+  -->
+
+</manifest>

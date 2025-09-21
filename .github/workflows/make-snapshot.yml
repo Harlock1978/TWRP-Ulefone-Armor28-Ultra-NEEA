@@ -2,14 +2,17 @@ name: Make TWRP source snapshot
 on:
   workflow_dispatch: {}
 
+env:
+  MANIFEST_URL: https://github.com/Harlock1978/TWRP-Armor-28-Ultra-NEEA.git
+  MANIFEST_BRANCH: twrp-14.1
+
 jobs:
   snapshot:
     runs-on: ubuntu-22.04
     steps:
-      - name: Free disk space
+      - name: Free disk space (optional)
         run: |
           sudo rm -rf /usr/local/lib/android || true
-          sudo apt-get clean
           df -h
 
       - name: Install deps + repo tool
@@ -21,22 +24,29 @@ jobs:
           chmod a+x $HOME/bin/repo
           echo "$HOME/bin" >> $GITHUB_PATH
 
-      - name: repo init + sync (your forked manifest)
+      # Se in futuro il repo torna privato o qualche <project> è privato,
+      # sblocca l'autenticazione aggiungendo un PAT come secret GH_PAT
+      # e decommenta questo step:
+      # - name: Configure Git auth for private GitHub
+      #   run: |
+      #     git config --global url."https://${{ github.actor }}:${{ secrets.GH_PAT }}@github.com/".insteadOf "https://github.com/"
+      #     git config --global url."https://${{ github.actor }}:${{ secrets.GH_PAT }}@github.com/".insteadOf "git@github.com:"
+      #     git config --global url."https://${{ github.actor }}:${{ secrets.GH_PAT }}@github.com/".insteadOf "ssh://git@github.com/"
+
+      - name: repo init + sync (your manifest fork)
         run: |
           mkdir -p ~/twrp && cd ~/twrp
-          repo init -u https://github.com/Harlock1978/TWRP-Armor-28-Ultra-NEEA.git -b twrp-14.1
+          repo init --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
           repo sync -c -j8
 
       - name: Shrink snapshot (drop VCS metadata)
         run: |
           cd ~/twrp
-          # Rimuovi metadati git/repo (non necessari per compilare)
           rm -rf .repo
           find . -name ".git" -type d -prune -exec rm -rf {} +
-          # Crea tar.gz preservando permessi/symlink
           tar -czf /tmp/twrp-src-snapshot.tar.gz .
 
-      - name: Split into 1.9GB chunks (artifact limit)
+      - name: Split into 1.9GB chunks (artifact per-part limit)
         run: |
           cd /tmp
           split -b 1900m twrp-src-snapshot.tar.gz twrp-src-snapshot.tar.gz.part-
