@@ -1,0 +1,48 @@
+name: Make TWRP source snapshot
+on:
+  workflow_dispatch: {}
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android || true
+          sudo apt-get clean
+          df -h
+
+      - name: Install deps + repo tool
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-core curl python3 lz4
+          mkdir -p $HOME/bin
+          curl -o $HOME/bin/repo https://storage.googleapis.com/git-repo-downloads/repo
+          chmod a+x $HOME/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: repo init + sync (your forked manifest)
+        run: |
+          mkdir -p ~/twrp && cd ~/twrp
+          repo init -u https://github.com/Harlock1978/TWRP-Armor-28-Ultra-NEEA.git -b twrp-14.1
+          repo sync -c -j8
+
+      - name: Shrink snapshot (drop VCS metadata)
+        run: |
+          cd ~/twrp
+          # Rimuovi metadati git/repo (non necessari per compilare)
+          rm -rf .repo
+          find . -name ".git" -type d -prune -exec rm -rf {} +
+          # Crea tar.gz preservando permessi/symlink
+          tar -czf /tmp/twrp-src-snapshot.tar.gz .
+
+      - name: Split into 1.9GB chunks (artifact limit)
+        run: |
+          cd /tmp
+          split -b 1900m twrp-src-snapshot.tar.gz twrp-src-snapshot.tar.gz.part-
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: twrp-src-snapshot
+          path: /tmp/twrp-src-snapshot.tar.gz.part-*
