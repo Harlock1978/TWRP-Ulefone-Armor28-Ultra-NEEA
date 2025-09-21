@@ -27,7 +27,7 @@ jobs:
       # Se in futuro il repo torna privato o qualche <project> è privato,
       # sblocca l'autenticazione aggiungendo un PAT come secret GH_PAT
       # e decommenta questo step:
-       - name: Configure Git auth for GitHub
+      - name: Configure Git auth for GitHub
         env:
          GH_ACTOR: ${{ github.actor }}
          GH_TOKEN: ${{ github.token }}
